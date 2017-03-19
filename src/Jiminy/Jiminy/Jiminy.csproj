@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/fthoms/jiminy</PackageProjectUrl>
     <RepositoryUrl>https://github.com/fthoms/jiminy</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>csp "communicating sequential processes" concurrent concurrency synchronization synchronisation</PackageTags>
+    <PackageTags>csp channels concurrent concurrency synchronization synchronisation</PackageTags>
     <PackageReleaseNotes>Release candidate 1</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
