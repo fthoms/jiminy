@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 
 namespace Jiminy {
     public sealed class Timer {
-        readonly PubSub<DateTime> timerExpired = new PubSub<DateTime>();
+        readonly IChannel<DateTime> timerExpired = Jiminy.Channel.Make<DateTime>();
+        public IReceive<DateTime> Channel => timerExpired;
 
         public Timer(TimeSpan duration) {
             Task.Run(() =>
             {
                 Task.Delay(duration).Wait();
-                timerExpired.Publish(DateTime.Now);
+                timerExpired.Send(DateTime.Now);
                 timerExpired.Close();
             });
         }
@@ -34,8 +35,7 @@ namespace Jiminy {
         /// </summary>
         /// <returns>The current datetime if the timer ran to completion, null if it was stopped prematurely</returns>
         public DateTime? Wait() {
-            var chan = timerExpired.Subscribe();
-            var (r, err) = chan.Receive();
+            var (r, err) = timerExpired.Receive();
             if (err != null) {
                 return null;
             }
@@ -49,7 +49,7 @@ namespace Jiminy {
         /// <returns></returns>
         public static IReceive<DateTime> After(TimeSpan duration) {
             var timer = new Timer(duration);
-            return timer.timerExpired.Subscribe();
+            return timer.Channel;
         }
     }
 }
