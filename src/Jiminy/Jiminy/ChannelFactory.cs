@@ -38,21 +38,6 @@ namespace Jiminy {
         /// <returns></returns>
         public static IReceive<T> Merge<T>(params IReceive<T>[] sources) {
             var output = Make<T>();
-            //var wg = new WaitGroup(sources.Length);
-            //foreach (var channel in sources) {
-            //    Task.Run(() =>
-            //    {
-            //        foreach (var msg in channel.Range()) {
-            //            output.Send(msg);
-            //        }
-            //        wg.Done();
-            //    });
-            //}
-            //Task.Run(() =>
-            //{
-            //    wg.Wait();
-            //    output.Close();
-            //});
             Task.Run(() =>
             {
                 var loop = true;
