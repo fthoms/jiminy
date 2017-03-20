@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Jiminy.Examples {
+namespace Jiminy.PerformanceTest {
     /// <summary>
     /// This example tests the speed of an unbuffered channel and a number of buffered channels
     /// with different buffer limits.
     /// </summary>
-    sealed class PerformanceTest : IExample {
+    sealed class PerformanceTest {
         const int NumberOfMessages = 2000000;
 
         public void Run() {

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jiminy.UnitTests", "Jiminy.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jiminy.Examples", "Jiminy.Examples\Jiminy.Examples.csproj", "{4133812B-0709-4FAF-8F8A-3A40E81A18B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jiminy.PerformanceTest", "Jiminy.PerformanceTest\Jiminy.PerformanceTest.csproj", "{717F1391-FDB7-40AB-A9E7-BB56C15819F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4133812B-0709-4FAF-8F8A-3A40E81A18B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4133812B-0709-4FAF-8F8A-3A40E81A18B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4133812B-0709-4FAF-8F8A-3A40E81A18B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{717F1391-FDB7-40AB-A9E7-BB56C15819F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{717F1391-FDB7-40AB-A9E7-BB56C15819F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{717F1391-FDB7-40AB-A9E7-BB56C15819F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{717F1391-FDB7-40AB-A9E7-BB56C15819F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,6 @@
 ﻿namespace Jiminy.Examples {
     class Program {
         static void Main(string[] args) {
-            //var example = new PerformanceTest();
             //var example = new SendReceive();
             //var example = new NonblockingSendAndReceive();
 
