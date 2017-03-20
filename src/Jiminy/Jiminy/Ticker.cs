@@ -7,13 +7,13 @@ namespace Jiminy {
         readonly TimeSpan interval;
         Timer timer;
 
-        public IReceive<DateTime> Chan => publicChannel;
+        public IReceive<DateTime> Channel => publicChannel;
 
         public Ticker(TimeSpan interval) : this(interval, interval) {
         }
 
         public Ticker(TimeSpan delay, TimeSpan interval) {
-            publicChannel = Channel.Make<DateTime>(100);
+            publicChannel = Jiminy.Channel.Make<DateTime>(100);
             this.interval = interval;
             StartTimer(delay);
         }

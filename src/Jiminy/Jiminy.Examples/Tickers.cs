@@ -8,7 +8,7 @@ namespace Jiminy.Examples {
             var ticker = new Ticker(TimeSpan.FromMilliseconds(500));
             Task.Run(() =>
             {
-                foreach (var m in ticker.Chan.Range()) {
+                foreach (var m in ticker.Channel.Range()) {
                     Console.WriteLine($"Tick at {m.TimeOfDay}");
                 }
                 done.Done();
