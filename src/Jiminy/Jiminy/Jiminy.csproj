@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/fthoms/jiminy</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>csp channels concurrent concurrency synchronization synchronisation</PackageTags>
-    <PackageReleaseNotes>Release candidate 1</PackageReleaseNotes>
+    <PackageReleaseNotes>Release candidate 2. Includes minor changes to PubSub and Timer</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <AssemblyVersion>1.0.1</AssemblyVersion>
   </PropertyGroup>
