@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Jiminy {
-    public sealed class PubSub<T> : IDisposable {
+    public sealed class PubSub<T> : IClosable, IDisposable {
         readonly List<IChannel<T>> subscriberChannels = new List<IChannel<T>>();
         readonly IChannel<T> publisherChannel;
         volatile bool isOpen = true;

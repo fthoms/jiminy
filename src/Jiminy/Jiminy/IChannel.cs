@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Jiminy {
-    public interface IChannel : IDisposable {
+    public interface IChannel : IClosable, IDisposable {
         /// <summary>
         /// Gets the id of the channel
         /// </summary>
@@ -15,11 +15,6 @@ namespace Jiminy {
         /// to Receive then even if the channel is closed.
         /// </summary>
         bool IsClosed { get; }
-
-        /// <summary>
-        /// Closes the channel. Any messages sent before closing can still be read.
-        /// </summary>
-        void Close();
     }
 
     public interface ISend<T> : IChannel {

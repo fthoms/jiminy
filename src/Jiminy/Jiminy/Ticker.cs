@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 namespace Jiminy {
-    public sealed class Ticker {
+    public sealed class Ticker : IClosable {
         readonly IChannel<DateTime> publicChannel;
         readonly TimeSpan interval;
         Timer timer;
@@ -21,6 +21,8 @@ namespace Jiminy {
         public void Stop() {
             timer?.Stop();
         }
+
+        public void Close() => Stop();
 
         void StartTimer(TimeSpan intrvl) {
             Task.Run(() =>

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 namespace Jiminy {
-    public sealed class Timer {
+    public sealed class Timer : IClosable {
         readonly IChannel<DateTime> timerExpired = Jiminy.Channel.Make<DateTime>();
         public IReceive<DateTime> Channel => timerExpired;
 
@@ -29,6 +29,8 @@ namespace Jiminy {
         public void Stop() {
             timerExpired.Close();
         }
+
+        public void Close() => Stop();
 
         /// <summary>
         /// Wait for the timer to complete
