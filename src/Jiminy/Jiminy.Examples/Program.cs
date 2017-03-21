@@ -3,7 +3,7 @@
         static void Main(string[] args) {
             //var example = new SendReceive();
             //var example = new SimpleSendReceive();
-            var example = new ChannelBuffering();
+            //var example = new ChannelBuffering();
             //var example = new Select();
             //var example = new ChannelDirections();
             //var example = new PublishSubscribe();
@@ -11,6 +11,8 @@
             //var example = new Timeouts();
             //var example = new FanOutFanIn();
             //var example = new Tickers();
+            //var example = new ChannelSynchronisation();
+            var example = new ChannelRange();
             example.Run();
         }
     }
