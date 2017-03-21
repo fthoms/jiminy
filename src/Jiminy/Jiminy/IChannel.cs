@@ -64,6 +64,5 @@ namespace Jiminy {
     /// </summary>
     public interface IChannelSelectCapabilities {
         void AddListener(IChannelListener listener);
-        (object Message, Error Error) ReceiveIfAny();
     }
 }

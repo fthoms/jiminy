@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>Frank Thomsen</Authors>
     <Company />
     <Description>Communicating sequential processes (CSP) for .NET using channels. It is heavily inspired by channels in the Go programming language.</Description>
@@ -11,9 +11,10 @@
     <RepositoryUrl>https://github.com/fthoms/jiminy</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>csp channels concurrent concurrency synchronization synchronisation</PackageTags>
-    <PackageReleaseNotes>Release candidate 2. Includes minor changes to PubSub and Timer</PackageReleaseNotes>
+    <PackageReleaseNotes>Simplifies default handler in nonblocking select, but otherwise does not change the public interface.</PackageReleaseNotes>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

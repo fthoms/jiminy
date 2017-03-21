@@ -43,12 +43,6 @@ namespace Jiminy {
             return listener.Result();
         }
 
-        public (object Message, Error Error) ReceiveIfAny() {
-            var listener = new ReceiveIfAnyListener<T>();
-            AddListener(listener);
-            return listener.Result();
-        }
-
         public void AddListener(IChannelListener listener) {
             lock (this) {
                 if (IsClosed && !HasMessages) {

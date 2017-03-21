@@ -54,51 +54,10 @@ namespace Jiminy.UnitTests {
             error.ShouldBeNull();
         }
 
-        [Fact(DisplayName = "Nonblocking receive fails immediately if there are no messages")]
-        void nonblocking_receive_fails_immediately_if_no_messages() {
-            var chan = Channel.Make<Guid>();
-            var (msg, error) = chan.ReceiveIfAny();
-            error.ShouldNotBeNull();
-        }
-
-        [Fact(DisplayName = "Nonblocking receive succeeds with correct message if there are waiting messages")]
-        void nonblocking_receive_succeeds_if_messages_await() {
-            var chan = Channel.Make<Guid>();
-            var expectedMsg = Guid.NewGuid();
-            Task.Run(() => chan.Send(expectedMsg));
-            Task.Delay(100).Wait();
-            var (msg, error) = chan.ReceiveIfAny();
-            error.ShouldBeNull();
-            msg.ShouldBe(expectedMsg);
-        }
-
-        [Fact(DisplayName = "Nonblocking receive fails on second call if only one message was sent")]
-        void nonblocking_receive_fails_on_second_call_if_only_one_messsage() {
-            var chan = Channel.Make<Guid>();
-            var expectedMsg = Guid.NewGuid();
-            Task.Run(() => chan.Send(expectedMsg));
-            Task.Delay(100).Wait();
-            var (msg, error) = chan.ReceiveIfAny();
-            error.ShouldBeNull();
-            (msg, error) = chan.ReceiveIfAny();
-            error.ShouldNotBeNull();
-        }
-
         [Fact(DisplayName = "Blocking send succeeds if there is a blocking receiver")]
         void blocking_send_succeeds_on_blocking_receiver() {
             var chan = Channel.Make<int>();
             Task.Run(() => chan.Receive());
-            chan.Send(1).ShouldBeNull();
-        }
-
-        [Fact(DisplayName = "Blocking send succeeds if there is a nonblocking receiver")]
-        void blocking_send_succeeds_on_nonblocking_receiver() {
-            var chan = Channel.Make<int>();
-            Task.Run(() =>
-            {
-                Task.Delay(100).Wait();
-                chan.ReceiveIfAny();
-            });
             chan.Send(1).ShouldBeNull();
         }
 
@@ -111,24 +70,6 @@ namespace Jiminy.UnitTests {
             {
                 Task.Delay(100).Wait();
                 chan.Receive();
-                messageReceived = true;
-                complete.Set();
-            });
-            messageReceived.ShouldBeFalse();
-            chan.Send(1);
-            complete.Wait();
-            messageReceived.ShouldBeTrue();
-        }
-
-        [Fact(DisplayName = "Blocking send blocks until there is a nonblocking receiver")]
-        void blocking_send_blocks_until_nonblocking_receiver() {
-            var chan = Channel.Make<int>();
-            var messageReceived = false;
-            var complete = new ManualResetEventSlim();
-            Task.Run(() =>
-            {
-                Task.Delay(100).Wait();
-                chan.ReceiveIfAny();
                 messageReceived = true;
                 complete.Set();
             });
@@ -269,7 +210,7 @@ namespace Jiminy.UnitTests {
             error.ShouldBeNull();
         }
 
-        [Fact(DisplayName = "Nonblocking select fails if all channels are closed")]
+        [Fact(DisplayName = "Nonblocking select succeeds even if all channels are closed")]
         void nonblocking_select_fails_on_all_channels_closed() {
             var chan1 = Channel.Make<int>();
             var chan2 = Channel.Make<int>();
@@ -282,10 +223,10 @@ namespace Jiminy.UnitTests {
                 .Case(chan1, m => chan1RcvMsg = m)
                 .Case(chan2, m => chan2RcvMsg = m)
                 .Otherwise(() => defaultInvoked = true);
-            error.ShouldNotBeNull();
+            error.ShouldBeNull();
             chan1RcvMsg.ShouldBeNull();
             chan2RcvMsg.ShouldBeNull();
-            defaultInvoked.ShouldBeFalse();
+            defaultInvoked.ShouldBeTrue();
         }
 
         [Fact(DisplayName = "Nonblocking select invokes the correct handler")]
@@ -358,7 +299,7 @@ namespace Jiminy.UnitTests {
             error.description.Contains(nameof(DivideByZeroException)).ShouldBeTrue();
         }
 
-        [Fact(DisplayName = "Nonnlocking receive returns an error if a handler fails with an exception")]
+        [Fact(DisplayName = "Nonblocking select returns an error if a handler fails with an exception")]
         void nonblocking_receive_returns_error_on_handler_exception() {
             var chan1 = Channel.Make<int>();
             var chan2 = Channel.Make<int>();
@@ -372,7 +313,7 @@ namespace Jiminy.UnitTests {
             error.description.Contains(nameof(DivideByZeroException)).ShouldBeTrue();
         }
 
-        [Fact(DisplayName = "Nonnlocking receive returns an error if there are no messages and the default handler fails with an exception")]
+        [Fact(DisplayName = "Nonblocking select returns an error if there are no messages and the default handler fails with an exception")]
         void nonblocking_receive_returns_error_on_default_handler_exception() {
             var chan1 = Channel.Make<int>();
             var chan2 = Channel.Make<int>();

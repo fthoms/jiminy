@@ -42,41 +42,26 @@ namespace Jiminy {
 
         public Error Receive() {
             var listener = new MultiChannelReceiveListener();
-            foreach (var chan in channels) {
-                listener.AddMessageHandler(chan.Id, messageHandlersByChannelId[chan.Id]);
+            HookupListenerToChannels(listener);
+            return listener.Success();
+        }
+
+        void HookupListenerToChannels(MultiChannelReceiveListener listener) {
+            foreach (var kvp in messageHandlersByChannelId) {
+                listener.AddMessageHandler(kvp.Key, kvp.Value);
             }
             foreach (var chan in channels) {
                 (chan as IChannelSelectCapabilities).AddListener(listener);
             }
-            return listener.Success();
         }
 
         public Error Otherwise(Action defaultAction) {
-            var openChannels = channels.Count;
-            foreach (var chan in channels) {
-                if (chan.IsClosed) {
-                    openChannels--;
-                } else {
-                    var (msg, error) = (chan as IChannelSelectCapabilities).ReceiveIfAny();
-                    if (error == null) {
-                        try {
-                            messageHandlersByChannelId[chan.Id](msg);
-                        } catch (Exception ex) {
-                            return ex.AsError();
-                        }
-                        return Error.Nil;
-                    }
-                }
-            }
-            if (openChannels == 0) {
-                return Error.NoMessages;
-            }
-            try {
-                defaultAction();
-            } catch (Exception ex) {
-                return ex.AsError();
-            }
-            return Error.Nil;
+            var defaultChannel = new DefaultChannel();
+            messageHandlersByChannelId.Add(defaultChannel.Id, _ => defaultAction());
+            var listener = new MultiChannelReceiveListener();
+            HookupListenerToChannels(listener);
+            defaultChannel.AddListener(listener);
+            return listener.Success();
         }
     }
 }
