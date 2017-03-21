@@ -23,17 +23,24 @@ Jiminy uses return values instead, as illustrated in the following code
 		...
 	}
 
-### In-depth Examples
-Take a look at the wiki for more examples on how to use Jiminy, and take a look at the example code. These sources are more extensive than this document is meant to be, and there you will get more information on:
+### Usage
+Take a look at the example code and read the wiki for more extensive resources on how to use Jiminy. There you will get more information on:
 
 *	Buffered and unbuffered channels
-*	Blocking and non-blocking send / receive
+*	Synchronisation between tasks
+	*	With channels
+	*	With WaitGroup
+*	Non-blocking channel operations
+*	Closing channels
 *	Stream processing using Range()
+*	Increasing type safety and code readability with channel directions
 *	Channel select for reading from multiple channels at once
-*	Fan-out for distributing work across multiple threads
+*	Fan-out for distributing work across worker pools
 *	Channel merge for fan-in, where multiple channels are merged into one 
 *	Timers, tickers and time-outs
-*	Publish/subscribe 
+*	Rate limiting using tickers
+*	Publish/subscribe
+*	How to implement a semaphore using channels
 
 ## Download
 Get the latest source from this repository, or dive right in and [get the latest nuget package](https://www.nuget.org/packages/Jiminy) for your project.
