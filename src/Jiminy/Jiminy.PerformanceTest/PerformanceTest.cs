@@ -53,11 +53,15 @@ namespace Jiminy.PerformanceTest {
             while (ok && receivedMsgs.Count > 0) {
                 ok &= receivedMsgs.Dequeue() == msgs.Dequeue();
             }
+            var oldColor = Console.ForegroundColor;
             if (ok) {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("ok");
             } else {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("failure");
             }
+            Console.ForegroundColor = oldColor;
             Console.WriteLine();
         }
 
