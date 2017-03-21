@@ -2,9 +2,13 @@
 ## About Jiminy
 Jiminy is a small library for building concurrent programs in an easy manner. The main abstraction is the *channel* which is used to communicate between threads/tasks, and also to synchronise them.
 
-There are several ways of writing concurrent applications. One of the best is the actor model, which is famously implemented in the [akka framework for the JVM](http://akka.io) and the [.NET port akka.NET](http://getakka.net). Another strong favourite is CSP.
+There are several ways of writing concurrent applications. One of the best is the actor model, which is famously implemented in the [akka framework for the JVM](http://akka.io) and the [.NET port akka.NET](http://getakka.net), and lately the [Proto actor framework](http://proto.actor) for Go and .NET. Another strong favourite is CSP.
 
 Communicating Sequential Processes (CSP) with channels is a method for writing concurrent programs, and **Jiminy** is a .NET implementation of this. CSP and the actor model has overlapping use cases, but differ in some key areas. Which method is the best depends entirely on the use case and the application being written, and akka/akka.NET are really great libraries; Many high performing and resilient systems are written using the actor model. However, CSP can be used to just as easily, if not easier, create much the same applications, and the model is sometimes simpler than the actor model to work with.
+
+CSP can be used to implement systems and applications with the patterns described in the well-known and acclaimed [Enterprise Integration Patterns](http://www.enterpriseintegrationpatterns.com) or the newer [Reactive Messaging Patterns with the Actor Model](https://github.com/VaughnVernon/ReactiveMessagingPatterns_ActorModel). Even the actor model itself can be implemented using CSP.
+
+For a more detailed discussion of the differences between CSP and the actor model, see [Akka actors vs Go channels](https://www.quora.com/How-are-Akka-actors-different-from-Go-channels).
 
 ### Inspired by Go
 Jiminy is inspired by my experience with CSP in the [Go programming language](https://golang.org), and I wanted to bring CSP to .NET when I wrote Jiminy. This also means that I have done my best to get rid of exceptions, and instead return instances of `Jiminy.Error` if and when an error occurs.
