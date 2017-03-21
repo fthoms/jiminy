@@ -4,7 +4,7 @@ Jiminy is a small library for building concurrent programs in an easy manner. Th
 
 There are several ways of writing concurrent applications. One of the best is the actor model, which is famously implemented in the [akka framework for the JVM](http://akka.io) and the [.NET port akka.NET](http://getakka.net). Another strong favourite is CSP.
 
-Communicating Sequential Processes (CSP) with channels is another method for writing concurrent programs, and **Jiminy** is a .NET implementation of this. CSP and the actor model has overlapping use cases, but differ in some key areas. Which method is the best depends entirely on the use case and the application being written, and akka/akka.NET are really great libraries; Many high performing and resilient systems are written using the actor model.
+Communicating Sequential Processes (CSP) with channels is a method for writing concurrent programs, and **Jiminy** is a .NET implementation of this. CSP and the actor model has overlapping use cases, but differ in some key areas. Which method is the best depends entirely on the use case and the application being written, and akka/akka.NET are really great libraries; Many high performing and resilient systems are written using the actor model. However, CSP can be used to just as easily, if not easier, create much the same applications, and the model is sometimes simpler than the actor model to work with.
 
 ### Inspired by Go
 Jiminy is inspired by my experience with CSP in the [Go programming language](https://golang.org), and I wanted to bring CSP to .NET when I wrote Jiminy. This also means that I have done my best to get rid of exceptions, and instead return instances of `Jiminy.Error` if and when an error occurs.
