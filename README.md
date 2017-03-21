@@ -28,6 +28,7 @@ Take a look at the wiki for more examples on how to use Jiminy, and take a look 
 
 *	Buffered and unbuffered channels
 *	Blocking and non-blocking send / receive
+*	Stream processing using Range()
 *	Channel select for reading from multiple channels at once
 *	Fan-out for distributing work across multiple threads
 *	Channel merge for fan-in, where multiple channels are merged into one 
