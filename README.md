@@ -28,7 +28,7 @@ Jiminy uses return values instead, as illustrated in the following code
 	}
 
 ### Usage
-Take a look at the example code and read the wiki for more extensive resources on how to use Jiminy. There you will get more information on:
+Take a look at the example code and read [the wiki](https://github.com/fthoms/jiminy/wiki) for more resources on how to use Jiminy. There you will get more information on:
 
 *	Buffered and unbuffered channels
 *	Synchronisation between tasks
