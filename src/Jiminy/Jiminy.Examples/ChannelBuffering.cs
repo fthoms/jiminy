@@ -8,6 +8,8 @@ namespace Jiminy.Examples {
             messages.Send("buffered");
             messages.Send("channel");
 
+            messages.Close();
+
             Console.WriteLine(messages.Receive().Message);
             Console.WriteLine(messages.Receive().Message);
         }
