@@ -12,7 +12,9 @@
             //var example = new FanOutFanIn();
             //var example = new Tickers();
             //var example = new ChannelSynchronisation();
-            var example = new ChannelRange();
+            //var example = new ChannelRange();
+            //var example = new ClosingAChannel();
+            var example = new ChannelDefaultSelect();
             example.Run();
         }
     }
