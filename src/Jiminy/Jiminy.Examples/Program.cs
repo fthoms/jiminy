@@ -14,7 +14,8 @@
             //var example = new ChannelSynchronisation();
             //var example = new ChannelRange();
             //var example = new ClosingAChannel();
-            var example = new ChannelDefaultSelect();
+            //var example = new ChannelDefaultSelect();
+            var example = new RateLimiting();
             example.Run();
         }
     }
