@@ -1,157 +1,95 @@
-﻿using Jiminy.ChannelListeners;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Jiminy {
-    sealed class Channel<T> : ChannelBase, IChannel<T> {
-        readonly Guid id = Guid.NewGuid();
-        readonly Queue<SendHandle> unreleasedHandles = new Queue<SendHandle>();
-        readonly Queue<SendHandle> releasedHandles = new Queue<SendHandle>();
-        readonly Queue<IChannelListener> listeners = new Queue<IChannelListener>();
-        readonly int limit;
+	sealed class Channel<T> : IChannel<T>, ISelectSupport<T> {
+		readonly Queue<T> bufferedMessages;
+		readonly int bufferSize;
+		readonly object sync = new object();
+		readonly Queue<Awaitable> blockedSenders;
+		readonly Queue<AwaitableMessage<T>> blockedReceivers;
 
-        public override Guid Id => id;
-        public bool IsClosed { get; private set; } = false;
-        bool HasMessages => (unreleasedHandles.Count + releasedHandles.Count) > 0;
-        bool HasReceivers => listeners.Count > 0;
+		internal Channel() : this(0) { }
+		internal Channel(int bufferSize) {
+			if (bufferSize < 0) throw new ArgumentException($"{bufferSize}: buffer size must be 0 or greater");
+			this.bufferSize = bufferSize;
+			bufferedMessages = new Queue<T>();
+			blockedReceivers = new Queue<AwaitableMessage<T>>();
+			blockedSenders = new Queue<Awaitable>();
+		}
 
-        public Channel() : this(0) {
-        }
+		public Guid Id { get; } = Guid.NewGuid();
+		public bool IsClosed { get; private set; } = false;
 
-        public Channel(int limit) {
-            if (limit < 0) {
-                throw new ArgumentException($"{limit}: invalid buffer limit");
-            }
-            this.limit = limit;
-        }
+		public void Close() {
+			lock (sync) {
+				IsClosed = true;
+			}
+		}
 
-        public void Close() {
-            lock (this) {
-                IsClosed = true;
-                ProcessMessages();
-            }
-        }
+		public void Dispose() {
+			Close();
+		}
 
-        public void Dispose() {
-            Close();
-        }
+		public (T Message, bool Ok) Receive() {
+			var messageReady = new AwaitableMessage<T>();
+			Receive(messageReady);
+			messageReady.Wait();
+			return (messageReady.Message, true);
+		}
 
-        public (T Message, Error Error) Receive() {
-            var listener = new ReceiveListener<T>();
-            AddListener(listener);
-            return listener.Result();
-        }
+		public void Receive(AwaitableMessage<T> awaitable) {
+			lock (sync) {
+				blockedReceivers.Enqueue(awaitable);
+				if (bufferedMessages.Count > 0) {
+					blockedReceivers.Dequeue().Release(Id, bufferedMessages.Dequeue());
+					if (blockedSenders.Count > 0) {
+						blockedSenders.Dequeue().Release(Id);
+					}
+				}
+			}
+		}
 
-        public void AddListener(IChannelListener listener) {
-            lock (this) {
-                if (IsClosed && !HasMessages) {
-                    listener.OnChannelClosed(Id);
-                    return;
-                }
-                listeners.Enqueue(listener);
-                ProcessMessages();
-                TrimHandles();
-            }
-        }
+		public bool Send(T message) {
+			var messageSent = new Awaitable();
+			Send(message, messageSent);
+			messageSent.Wait();
+			return true;
+		}
 
-        public IEnumerable<T> Range() {
-            var error = Error.Nil;
-            T result;
-            while (error == null) {
-                (result, error) = Receive();
-                if (error == null) {
-                    yield return result;
-                }
-            }
-        }
+		public void Send(T message, Awaitable awaitable) {
+			lock (sync) {
+				bufferedMessages.Enqueue(message);
+				if (bufferedMessages.Count > bufferSize) {
+					blockedSenders.Enqueue(awaitable);
+				} else {
+					awaitable.Release(Id);
+				}
+				//drain used receivers
+				while (blockedReceivers.Count > 0 && blockedReceivers.Peek().IsReleased) {
+					blockedReceivers.Dequeue();
+				}
+				if (blockedReceivers.Count > 0) {
+					blockedReceivers.Dequeue().Release(Id, bufferedMessages.Dequeue());
+				}
+			}
+		}
+	}
 
-        public Error Send(T message) {
-            if (IsClosed) {
-                return Error.ChannelClosed;
-            }
-            var handle = new SendHandle(message);
-            lock (this) {
-                unreleasedHandles.Enqueue(handle);
-                TrimHandles();
-                ProcessMessages();
-            }
-            handle.Wait();
-            return Error.Nil;
-        }
+	public static class Channel {
+		/// <summary>
+		/// Create an unbuffered channel
+		/// </summary>
+		/// <typeparam name="T">The message type</typeparam>
+		/// <returns></returns>
+		public static IChannel<T> Make<T>() => new Channel<T>();
 
-        public Error Send(T message, Action defaultAction) {
-            lock (this) {
-                if (IsClosed) {
-                    return Error.ChannelClosed;
-                }
-                if (((releasedHandles.Count + unreleasedHandles.Count) - listeners.Count) < limit) {
-                    Send(message);
-                } else {
-                    defaultAction();
-                }
-                return Error.Nil;
-            }
-        }
-
-        void ProcessMessages() {
-            lock (this) {
-                //remove discarded listeners
-                while (HasReceivers && listeners.Peek().Discard) {
-                    listeners.Dequeue();
-                }
-                while (HasMessages && HasReceivers) {
-                    TrimHandles();
-                    var handle = PeekHandle();
-                    var handled = false;
-                    while(HasReceivers && !handled) {
-                        var listener = listeners.Dequeue();
-                        handled = listener.OnMessage(Id, handle.message);
-                    }
-                    if (handled) {
-                        DequeueHandle();
-                        handle.Release();
-                    }
-                }
-                if (IsClosed && !HasMessages) {
-                    while (HasReceivers) {
-                        listeners.Dequeue().OnChannelClosed(Id);
-                    }
-                }
-            }
-        }
-
-        void TrimHandles() {
-            while (unreleasedHandles.Count > 0 && releasedHandles.Count < limit) {
-                var handle = unreleasedHandles.Dequeue();
-                handle.Release();
-                releasedHandles.Enqueue(handle);
-            }
-        }
-
-        SendHandle PeekHandle() {
-            if (releasedHandles.Count > 0) {
-                return releasedHandles.Peek();
-            }
-            return unreleasedHandles.Peek();
-        }
-
-        void DequeueHandle() {
-            if (releasedHandles.Count > 0) {
-                releasedHandles.Dequeue();
-            } else {
-                unreleasedHandles.Dequeue();
-            }
-        }
-
-        sealed class SendHandle {
-            readonly ManualResetEventSlim wh = new ManualResetEventSlim();
-            public readonly T message;
-            public SendHandle(T message) {
-                this.message = message;
-            }
-            public void Wait() => wh.Wait();
-            public void Release() => wh.Set();
-        }
-    }
+		/// <summary>
+		/// Create a buffered channel
+		/// </summary>
+		/// <typeparam name="T">The message type</typeparam>
+		/// <param name="bufferSize">The buffer size</param>
+		/// <returns></returns>
+		public static IChannel<T> Make<T>(int bufferSize) => new Channel<T>(bufferSize);
+	}
 }
