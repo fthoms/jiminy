@@ -1,3 +1,4 @@
+
  
 ## About Jiminy
 Jiminy is a small library for building concurrent programs in an easy manner. The main abstraction is the *channel* which is used to communicate between threads/tasks, and also to synchronise them.
